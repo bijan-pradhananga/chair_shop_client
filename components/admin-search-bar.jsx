@@ -1,27 +1,27 @@
 'use client'
-import { useAppDispatch } from "@/lib/hooks";
-import { Input } from "./ui/input";
-import { useEffect, useState } from "react";
-import { fetchCategory, searchCategory } from "@/lib/features/category";
+import { useState, useEffect } from 'react';
+import { Input } from './ui/input';
 
-export function Search() {
+const Search = ({ fetchItems, searchItems }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [typingTimeout, setTypingTimeout] = useState(null);
-  const dispatch = useAppDispatch();
 
   const handleInputChange = (e) => {
     const value = e.target.value;
     setSearchTerm(value);
+
+    // Clear the previous timeout if the user is still typing
     if (typingTimeout) {
       clearTimeout(typingTimeout);
     }
 
+    // If there's a search term, start the search request after a delay
     if (value.length > 0) {
       setTypingTimeout(setTimeout(() => {
-        dispatch(searchCategory(value));
+        searchItems(value); // Call searchItems passed as prop
       }, 500));
-    }else{
-      dispatch(fetchCategory());
+    } else {
+      fetchItems(); // Call fetchItems passed as prop
     }
   };
 
@@ -32,14 +32,18 @@ export function Search() {
       }
     };
   }, [typingTimeout]);
+
   return (
     <div>
       <Input
         type="search"
-        placeholder="Search..."   value={searchTerm}
+        placeholder="Search..."
+        value={searchTerm}
         onChange={handleInputChange}
         className="md:w-[100px] lg:w-[300px] bg-white"
       />
     </div>
-  )
-}
+  );
+};
+
+export default Search;
