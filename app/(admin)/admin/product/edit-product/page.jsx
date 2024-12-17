@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
     Form,
@@ -18,7 +18,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { useEffect, useTransition } from "react";
+import React, { Suspense, useEffect, useTransition } from "react";
 import { useForm } from "react-hook-form";
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 import { clearError, clearSuccess, fetchSingleProduct, updateProduct } from "@/lib/features/product";
@@ -28,19 +28,21 @@ import { editProductFormSchema } from "@/schemas/product";
 import { fetchCategory } from "@/lib/features/category";
 import { fetchBrand } from "@/lib/features/brand";
 import { useSearchParams } from "next/navigation";
+import NotFoundPage from "@/components/design/404notFound";
 
-const EditProductPage = () => {
+const PageContent = () => {
     const dispatch = useAppDispatch();
     const { singleData, success, error, singleLoading } = useAppSelector((state) => state.product);
-    const { data: categories } = useAppSelector((state) => state.category);
+    const { data: categories, isLoading } = useAppSelector((state) => state.category);
     const { data: brands } = useAppSelector((state) => state.brand);
     const [isPending, startTransition] = useTransition();
     const params = useSearchParams();
-    const id = params.get('id');
+    const id = params.get('id'); // Move this outside the Suspense boundary
 
     if (!id) {
-        return <NotFoundPage />;
+        return <NotFoundPage />; // Return early if ID is missing
     }
+
     const form = useForm({
         resolver: zodResolver(editProductFormSchema),
         defaultValues: {
@@ -50,56 +52,65 @@ const EditProductPage = () => {
             stock: 1,
             category: '',
             brand: '',
-
         },
     });
-    useEffect(() => {
-        if (id) {
-            dispatch(fetchSingleProduct(id));
-        }
-        dispatch(fetchCategory());
-        dispatch(fetchBrand());
-    }, [id, dispatch])
 
     useEffect(() => {
-        if (singleData && Object.keys(singleData).length > 0) {
+        const fetchDetails = () => {
+            dispatch(fetchCategory());
+            dispatch(fetchBrand());
+            if (id) {
+                dispatch(fetchSingleProduct(id));
+            }
+        };
+
+        fetchDetails();
+    }, [id]);
+
+    useEffect(() => {
+        if (Object.keys(singleData).length > 0) {
+            if (singleData.category._id) {
+                form.setValue('category', singleData.category._id);
+            }
+            if (singleData.category._id) {
+                form.setValue('brand', singleData.brand._id);
+            }
             form.setValue('name', singleData.name);
             form.setValue('description', singleData.description);
             form.setValue('price', singleData.price);
             form.setValue('stock', singleData.stock);
-            form.setValue('category', singleData.category._id);
-            form.setValue('brand', singleData.brand._id);
         }
     }, [singleData]);
-    if (singleLoading) {
+
+    if (singleLoading || isLoading) {
         return <div>Loading...</div>;
     }
 
     if (error) {
-        return <NotFound />;
+        return <NotFoundPage />; // Return error if data fetching fails
     }
-
 
     const onSubmit = async (data) => {
         if (singleData?._id) {
             const formData = {
                 name: data.name,
                 description: data.description,
-                price:data.price,
-                stock:data.stock,
-                category:data.category,
-                brand:data.brand
+                price: data.price,
+                stock: data.stock,
+                category: data.category,
+                brand: data.brand
             };
             startTransition(() => {
                 dispatch(updateProduct({ id: singleData._id, formData }));
-            })
+            });
         }
     };
+
     return (
         <div>
             <Header />
             <Form {...form}>
-                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4" >
+                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
                     <FormField
                         control={form.control}
                         name="name"
@@ -169,7 +180,7 @@ const EditProductPage = () => {
                                         </SelectTrigger>
                                         <SelectContent>
                                             {categories.map((item) => (
-                                                <SelectItem key={item._id} value={item._id} >
+                                                <SelectItem key={item._id} value={item._id}>
                                                     {item.name}
                                                 </SelectItem>
                                             ))}
@@ -227,15 +238,21 @@ const EditProductPage = () => {
                 onClose={() => dispatch(clearError())}
             />
         </div>
-    )
-}
-
+    );
+};
 
 const Header = () => {
     return (
         <header className="w-full bg-gray-100 rounded py-4 px-2 mb-4">
             <h1 className="text-2xl font-semibold">Edit Product</h1>
         </header>
-    )
-}
-export default EditProductPage
+    );
+};
+
+const Page = () => (
+    <Suspense fallback={<div>Loading...</div>}>
+        <PageContent />
+    </Suspense>
+);
+
+export default Page;

@@ -17,7 +17,7 @@ import AlertSuccess from "@/components/alert-success";
 import AlertFailure from "@/components/alert-failure";
 import Link from "next/link";
 
-const Brand = () => {
+const Page = () => {
     const dispatch = useAppDispatch();
     const { data, total, isLoading, success, error } = useAppSelector((state) => state.brand);
     
@@ -126,4 +126,4 @@ const Header = ({ fetchItems, searchItems }) => {
     )
 }
 
-export default Brand
+export default Page

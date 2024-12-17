@@ -1,7 +1,7 @@
 "use client";
-import { clearError, clearSuccess, deleteProduct, deleteProductImg, fetchProducts, fetchSingleProduct, searchProducts, updateProductImage } from "@/lib/features/product";
+import { clearError, clearSearch, clearSuccess, deleteProduct, deleteProductImg, fetchProducts, fetchSingleProduct, searchProducts, setSearch, updateProductImage } from "@/lib/features/product";
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import {
     Table,
     TableBody,
@@ -18,43 +18,55 @@ import AlertFailure from "@/components/alert-failure";
 import Link from "next/link";
 import Search from "@/components/admin-search-bar";
 import EditImageDialog from "@/components/image-popup";
+import { useSearchParams } from "next/navigation";
+import PaginationComponent from "@/components/pages";
 
 
-const Product = () => {
+const ProductPage = () => {
     const dispatch = useAppDispatch();
-    const { data, isLoading, success, error, singleData } = useAppSelector((state) => state.product);
-
+    const { data, isLoading, success, error, singleData, total, totalPages, isSearched } = useAppSelector((state) => state.product);
+    const searchParams = useSearchParams();
+    let currentPage = 1;
+    if (searchParams.get('page') ) {
+        currentPage = Number(searchParams.get('page'))
+    }
+    
     const [isModalOpen, setModalOpen] = useState(false);
-
+    
     const handleDelete = async (id) => {
         let confirm = window.confirm("Are you sure you want to delete this product?");
         if (confirm) {
             const result = await dispatch(deleteProduct(id));
             if (deleteProduct.fulfilled.match(result)) {
-                dispatch(fetchProducts());
+                dispatch(fetchProducts({ page: currentPage, limit: 10 }));
             }
         }
     };
 
-    const handleDeleteImage =  async (id,imageName) =>{
+    const handleDeleteImage = async (id, imageName) => {
         let confirm = window.confirm("Are you sure you want to delete this product?");
         if (confirm) {
-            const result = await dispatch(deleteProductImg({id,imageName}));
+            const result = await dispatch(deleteProductImg({ id, imageName }));
             if (deleteProductImg.fulfilled.match(result)) {
                 dispatch(fetchSingleProduct(id));
             }
         }
     }
 
-    const handleUpdateImage = async (id,formData) =>{
+    const handleUpdateImage = async (id, formData) => {
         const result = await dispatch(updateProductImage({ id, formData }));
         if (updateProductImage.fulfilled.match(result)) {
             dispatch(fetchSingleProduct(id));
         }
     }
 
+    const fetchItems = () =>{
+        dispatch(clearSearch());
+        dispatch(fetchProducts({ page: currentPage, limit: 10 }));
+    }
+
     const searchItems = (query) => {
-        dispatch(searchCategory(query)); 
+        dispatch(searchProducts(query));
     };
 
     // Open the modal and set the selected product
@@ -64,13 +76,13 @@ const Product = () => {
     };
 
     useEffect(() => {
-        dispatch(fetchProducts());
-    }, [dispatch]);
+        dispatch(fetchProducts({ page: currentPage, limit: 10 }));
+    }, [dispatch,currentPage]);
 
     return (
         <div>
             <div className="hidden flex-col md:flex">
-                <Header fetchItems={() => dispatch(fetchProducts())} searchItems={searchItems} />
+                <Header fetchItems={fetchItems} searchItems={searchItems} />
                 <>
                     {isLoading ? (
                         <TableLoader />
@@ -125,6 +137,13 @@ const Product = () => {
                             </TableBody>
                         </Table>
                     )}
+                    {/* Pagination */}
+                    {(!isSearched && total > 0) && (
+                        <PaginationComponent
+                            currentPage={currentPage}
+                            totalPages={totalPages}
+                        />
+                    )}
                 </>
             </div>
             <AlertSuccess
@@ -165,4 +184,12 @@ const Header = ({ fetchItems, searchItems }) => {
     )
 }
 
-export default Product
+const Page = () => {
+    return (
+        <Suspense fallback={<div>Loading...</div>}>
+            <ProductPage />
+        </Suspense>
+    );
+};
+
+export default Page;

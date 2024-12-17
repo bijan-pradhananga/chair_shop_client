@@ -11,7 +11,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { useEffect, useTransition } from "react";
+import { Suspense, useEffect, useTransition } from "react";
 import { useForm } from "react-hook-form";
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 import { clearError, clearSuccess, fetchSingleBrand, updateBrand } from "@/lib/features/brand";
@@ -22,7 +22,7 @@ import NotFound from "@/components/not-found";
 import NotFoundPage from "@/components/design/404notFound";
 import { brandFormSchema } from "@/schemas/brand";
 
-const EditBrandPage = () => {
+const PageContent = () => {
     const dispatch = useAppDispatch();
     const { singleData, success, error, isLoading } = useAppSelector((state) => state.brand);
     const [isPending, startTransition] = useTransition();
@@ -30,7 +30,7 @@ const EditBrandPage = () => {
     const id = params.get('id');
 
     if (!id) {
-        return <NotFoundPage/>;
+        return <NotFoundPage />;
     }
 
     const onSubmit = async (data) => {
@@ -41,7 +41,7 @@ const EditBrandPage = () => {
             };
 
             startTransition(() => {
-                dispatch(updateBrand({ id: singleData._id, formData })); // Dispatch with both id and form data
+                dispatch(updateBrand({ id: singleData._id, formData }));
             });
         }
     };
@@ -67,14 +67,14 @@ const EditBrandPage = () => {
         }
     }, [singleData]);
 
-
     if (isLoading) {
-        return <div>Loading...</div>; 
+        return <div>Loading...</div>;
     }
 
     if (error) {
         return <NotFound />;
     }
+
     return (
         <div>
             <Header />
@@ -109,7 +109,7 @@ const EditBrandPage = () => {
                     <Button type="submit" className="px-4 py-2" disabled={isPending}>
                         Submit
                     </Button>
-                    <Button type="button" onClick={() => window.history.back()}   className="px-4 py-2 ml-2" disabled={isPending}>
+                    <Button type="button" onClick={() => window.history.back()} className="px-4 py-2 ml-2" disabled={isPending}>
                         Go Back
                     </Button>
                 </form>
@@ -126,7 +126,7 @@ const EditBrandPage = () => {
             />
         </div>
     )
-}
+};
 
 const Header = () => {
     return (
@@ -136,4 +136,13 @@ const Header = () => {
     )
 }
 
-export default EditBrandPage
+// Wrap the EditBrandPage with Suspense to handle async behavior properly
+const Page = () => {
+    return (
+        <Suspense fallback={<div>Loading...</div>}>
+            <PageContent />
+        </Suspense>
+    );
+};
+
+export default Page;

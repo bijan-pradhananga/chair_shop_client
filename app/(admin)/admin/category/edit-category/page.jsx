@@ -11,7 +11,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { useEffect, useTransition } from "react";
+import { Suspense, useEffect, useTransition } from "react";
 import { useForm } from "react-hook-form";
 import { categoryFormSchema } from "@/schemas/category";
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
@@ -21,7 +21,7 @@ import AlertFailure from "@/components/alert-failure";
 import { useSearchParams } from 'next/navigation';
 import NotFound from "@/components/not-found";
 
-const EditCategoryPage = () => {
+const PageContent = () => {
     const dispatch = useAppDispatch();
     const { singleData, success, error, isLoading } = useAppSelector((state) => state.category);
     const [isPending, startTransition] = useTransition();
@@ -135,4 +135,10 @@ const Header = () => {
     )
 }
 
-export default EditCategoryPage
+const Page = () => (
+    <Suspense fallback={<div>Loading...</div>}>
+        <PageContent />
+    </Suspense>
+);
+
+export default Page
