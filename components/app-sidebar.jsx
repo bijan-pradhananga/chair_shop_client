@@ -25,8 +25,8 @@ import {
 // This is sample data.
 const data = {
   user: {
-    name: "shadcn",
-    email: "m@example.com",
+    name: "admin",
+    email: "admin@example.com",
     avatar: "",
   },
   teams: [
@@ -65,6 +65,21 @@ const data = {
         {
           title: "View Category",
           url: "/admin/category",
+        },
+      ],
+    },
+    {
+      title: "Brands",
+      url: "#",
+      icon: Shapes,
+      items: [
+        {
+          title: "Add Brand",
+          url: "/admin/brand/add-brand",
+        },
+        {
+          title: "View Brand",
+          url: "/admin/brand",
         },
       ],
     },
