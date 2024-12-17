@@ -1,5 +1,5 @@
 "use client";
-import { clearError, clearSuccess, deleteCategory, fetchCategory } from "@/lib/features/category";
+import { clearError, clearSuccess, deleteCategory, fetchCategory, searchCategory } from "@/lib/features/category";
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 import { useEffect } from "react";
 import {
@@ -10,26 +10,36 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import { Search } from "@/components/admin-search-bar";
+
 import TableLoader from "@/components/loader/table-loader";
 import TableEmpty from "@/components/empty-table";
 import AlertSuccess from "@/components/alert-success";
 import AlertFailure from "@/components/alert-failure";
 import Link from "next/link";
+import Search from "@/components/admin-search-bar";
 
 const Category = () => {
   const dispatch = useAppDispatch();
   const { data, isLoading, success, error } = useAppSelector((state) => state.category);
-  
+
   const handleDelete = async (id) => {
     let confirm = window.confirm("Are you sure u want to delete this product?");
     if (confirm) {
       const result = await dispatch(deleteCategory(id));
       if (deleteCategory.fulfilled.match(result)) {
         dispatch(fetchCategory());
-      } 
+      }
     }
   }
+
+  // Define functions to handle fetching and searching
+  const fetchItems = () => {
+    dispatch(fetchCategory()); // Fetch all categories
+  };
+
+  const searchItems = (query) => {
+    dispatch(searchCategory(query)); // Search categories based on query
+  };
 
 
 
@@ -39,11 +49,11 @@ const Category = () => {
   return (
     <div>
       <div className=" hidden flex-col md:flex  ">
-        <Header />
+        <Header fetchItems={fetchItems} searchItems={searchItems} />
         <>
           {isLoading ? (
             <TableLoader />
-          ) :  data.length === 0? (
+          ) : data.length === 0 ? (
             <TableEmpty />
           ) : (
             <Table>
@@ -104,7 +114,7 @@ const Category = () => {
   )
 }
 
-const Header = () => {
+const Header = ({ fetchItems, searchItems }) => {
   return (
     <div className="w-full bg-gray-50 rounded py-2 px-2 mb-4 border-b">
       <div className="flex h-16 items-center px-2">
@@ -112,7 +122,7 @@ const Header = () => {
           Categories
         </h1>
         <div className="ml-auto flex items-center space-x-4">
-          <Search />
+          <Search fetchItems={fetchItems} searchItems={searchItems} />
         </div>
       </div>
     </div>

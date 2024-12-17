@@ -21,27 +21,28 @@ import { Textarea } from "@/components/ui/textarea";
 import { useEffect, useTransition } from "react";
 import { useForm } from "react-hook-form";
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
-import { addProduct, clearError, clearSuccess } from "@/lib/features/product";
+import { clearError, clearSuccess, fetchSingleProduct, updateProduct } from "@/lib/features/product";
 import AlertSuccess from "@/components/alert-success";
 import AlertFailure from "@/components/alert-failure";
-import { productFormSchema } from "@/schemas/product";
+import { editProductFormSchema } from "@/schemas/product";
 import { fetchCategory } from "@/lib/features/category";
 import { fetchBrand } from "@/lib/features/brand";
+import { useSearchParams } from "next/navigation";
 
-const AddProductPage = () => {
+const EditProductPage = () => {
     const dispatch = useAppDispatch();
-    const { success, error } = useAppSelector((state) => state.product);
-    const { data: categories, isLoading } = useAppSelector((state) => state.category);
+    const { singleData, success, error, singleLoading } = useAppSelector((state) => state.product);
+    const { data: categories } = useAppSelector((state) => state.category);
     const { data: brands } = useAppSelector((state) => state.brand);
     const [isPending, startTransition] = useTransition();
+    const params = useSearchParams();
+    const id = params.get('id');
 
-    useEffect(() => {
-        dispatch(fetchCategory());
-        dispatch(fetchBrand());
-    }, [])
-
+    if (!id) {
+        return <NotFoundPage />;
+    }
     const form = useForm({
-        resolver: zodResolver(productFormSchema),
+        resolver: zodResolver(editProductFormSchema),
         defaultValues: {
             name: '',
             description: '',
@@ -49,35 +50,56 @@ const AddProductPage = () => {
             stock: 1,
             category: '',
             brand: '',
-            images: [],
+
         },
     });
+    useEffect(() => {
+        if (id) {
+            dispatch(fetchSingleProduct(id));
+        }
+        dispatch(fetchCategory());
+        dispatch(fetchBrand());
+    }, [id, dispatch])
+
+    useEffect(() => {
+        if (singleData && Object.keys(singleData).length > 0) {
+            form.setValue('name', singleData.name);
+            form.setValue('description', singleData.description);
+            form.setValue('price', singleData.price);
+            form.setValue('stock', singleData.stock);
+            form.setValue('category', singleData.category._id);
+            form.setValue('brand', singleData.brand._id);
+        }
+    }, [singleData]);
+    if (singleLoading) {
+        return <div>Loading...</div>;
+    }
+
+    if (error) {
+        return <NotFound />;
+    }
+
 
     const onSubmit = async (data) => {
-        const formData = new FormData();
-        formData.append('name', data.name);
-        formData.append('description', data.description);
-        formData.append('price', data.price);
-        formData.append('stock', data.stock);
-        formData.append('category', data.category);
-        formData.append('brand', data.brand);
-      
-        // Append images (ensure this matches the 'images' field in the backend)
-        Array.from(data.images).forEach((file, index) => {
-          formData.append('images', file); // 'images' should match the name in multer
-        });
-    
-        startTransition(() => {
-            dispatch(addProduct(formData));
-            form.reset();
-            
-        })
+        if (singleData?._id) {
+            const formData = {
+                name: data.name,
+                description: data.description,
+                price:data.price,
+                stock:data.stock,
+                category:data.category,
+                brand:data.brand
+            };
+            startTransition(() => {
+                dispatch(updateProduct({ id: singleData._id, formData }));
+            })
+        }
     };
     return (
         <div>
             <Header />
             <Form {...form}>
-                <form encType="multipart/form-data" onSubmit={form.handleSubmit(onSubmit)} className="space-y-4" >
+                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4" >
                     <FormField
                         control={form.control}
                         name="name"
@@ -147,7 +169,7 @@ const AddProductPage = () => {
                                         </SelectTrigger>
                                         <SelectContent>
                                             {categories.map((item) => (
-                                                <SelectItem key={item._id} value={item._id}>
+                                                <SelectItem key={item._id} value={item._id} >
                                                     {item.name}
                                                 </SelectItem>
                                             ))}
@@ -186,28 +208,11 @@ const AddProductPage = () => {
                             </FormItem>
                         )}
                     />
-                    <FormField
-                        control={form.control}
-                        name="images"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>Images</FormLabel>
-                                <FormControl>
-                                    <Input
-                                        name="images"
-                                        type="file"
-                                        multiple
-                                        accept="image/*"
-                                        onChange={(e) => field.onChange(e.target.files)}
-                                        disabled={isPending}
-                                    />
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
                     <Button type="submit" disabled={isPending}>
                         Submit
+                    </Button>
+                    <Button type="button" onClick={() => window.history.back()} className="px-4 py-2 ml-2" disabled={isPending}>
+                        Go Back
                     </Button>
                 </form>
             </Form>
@@ -229,8 +234,8 @@ const AddProductPage = () => {
 const Header = () => {
     return (
         <header className="w-full bg-gray-100 rounded py-4 px-2 mb-4">
-            <h1 className="text-2xl font-semibold">Add Product</h1>
+            <h1 className="text-2xl font-semibold">Edit Product</h1>
         </header>
     )
 }
-export default AddProductPage
+export default EditProductPage

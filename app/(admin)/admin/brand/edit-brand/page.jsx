@@ -13,23 +13,24 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useEffect, useTransition } from "react";
 import { useForm } from "react-hook-form";
-import { categoryFormSchema } from "@/schemas/category";
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
-import { clearError, clearSuccess, fetchSingleCategory, updateCategory } from "@/lib/features/category";
+import { clearError, clearSuccess, fetchSingleBrand, updateBrand } from "@/lib/features/brand";
 import AlertSuccess from "@/components/alert-success";
 import AlertFailure from "@/components/alert-failure";
 import { useSearchParams } from 'next/navigation';
 import NotFound from "@/components/not-found";
+import NotFoundPage from "@/components/design/404notFound";
+import { brandFormSchema } from "@/schemas/brand";
 
-const EditCategoryPage = () => {
+const EditBrandPage = () => {
     const dispatch = useAppDispatch();
-    const { singleData, success, error, isLoading } = useAppSelector((state) => state.category);
+    const { singleData, success, error, isLoading } = useAppSelector((state) => state.brand);
     const [isPending, startTransition] = useTransition();
     const params = useSearchParams();
     const id = params.get('id');
 
     if (!id) {
-        return null;
+        return <NotFoundPage/>;
     }
 
     const onSubmit = async (data) => {
@@ -40,13 +41,13 @@ const EditCategoryPage = () => {
             };
 
             startTransition(() => {
-                dispatch(updateCategory({ id: singleData._id, formData })); // Dispatch with both id and form data
+                dispatch(updateBrand({ id: singleData._id, formData })); // Dispatch with both id and form data
             });
         }
     };
 
     const form = useForm({
-        resolver: zodResolver(categoryFormSchema),
+        resolver: zodResolver(brandFormSchema),
         defaultValues: {
             name: '',
             description: '',
@@ -55,7 +56,7 @@ const EditCategoryPage = () => {
 
     useEffect(() => {
         if (id) {
-            dispatch(fetchSingleCategory(id));
+            dispatch(fetchSingleBrand(id));
         }
     }, [id, dispatch]);
 
@@ -68,7 +69,7 @@ const EditCategoryPage = () => {
 
 
     if (isLoading) {
-        return <div>Loading...</div>;
+        return <div>Loading...</div>; 
     }
 
     if (error) {
@@ -86,7 +87,7 @@ const EditCategoryPage = () => {
                             <FormItem>
                                 <FormLabel>Name</FormLabel>
                                 <FormControl>
-                                    <Input {...field} placeholder="Category Name" disabled={isPending} />
+                                    <Input {...field} placeholder="Brand Name" disabled={isPending} />
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>
@@ -99,7 +100,7 @@ const EditCategoryPage = () => {
                             <FormItem>
                                 <FormLabel>Description</FormLabel>
                                 <FormControl>
-                                    <Textarea {...field} placeholder="Category Description" disabled={isPending} />
+                                    <Textarea {...field} placeholder="Brand Description" disabled={isPending} />
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>
@@ -135,4 +136,4 @@ const Header = () => {
     )
 }
 
-export default EditCategoryPage
+export default EditBrandPage

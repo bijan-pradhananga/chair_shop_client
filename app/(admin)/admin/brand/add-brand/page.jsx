@@ -11,69 +11,33 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { useEffect, useTransition } from "react";
+import { useTransition } from "react";
 import { useForm } from "react-hook-form";
-import { categoryFormSchema } from "@/schemas/category";
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
-import { clearError, clearSuccess, fetchSingleCategory, updateCategory } from "@/lib/features/category";
+import { addBrand, clearError, clearSuccess } from "@/lib/features/brand";
 import AlertSuccess from "@/components/alert-success";
 import AlertFailure from "@/components/alert-failure";
-import { useSearchParams } from 'next/navigation';
-import NotFound from "@/components/not-found";
+import { brandFormSchema } from "@/schemas/brand";
 
-const EditCategoryPage = () => {
+const AddBrandPage = () => {
     const dispatch = useAppDispatch();
-    const { singleData, success, error, isLoading } = useAppSelector((state) => state.category);
+    const { success, error } = useAppSelector((state) => state.brand);
     const [isPending, startTransition] = useTransition();
-    const params = useSearchParams();
-    const id = params.get('id');
-
-    if (!id) {
-        return null;
-    }
-
-    const onSubmit = async (data) => {
-        if (singleData?._id) {
-            const formData = {
-                name: data.name,
-                description: data.description,
-            };
-
-            startTransition(() => {
-                dispatch(updateCategory({ id: singleData._id, formData })); // Dispatch with both id and form data
-            });
-        }
-    };
 
     const form = useForm({
-        resolver: zodResolver(categoryFormSchema),
+        resolver: zodResolver(brandFormSchema),
         defaultValues: {
             name: '',
             description: '',
         },
     });
 
-    useEffect(() => {
-        if (id) {
-            dispatch(fetchSingleCategory(id));
-        }
-    }, [id, dispatch]);
-
-    useEffect(() => {
-        if (singleData && Object.keys(singleData).length > 0) {
-            form.setValue('name', singleData.name);
-            form.setValue('description', singleData.description);
-        }
-    }, [singleData]);
-
-
-    if (isLoading) {
-        return <div>Loading...</div>;
-    }
-
-    if (error) {
-        return <NotFound />;
-    }
+    const onSubmit = async (data) => {
+        startTransition(() => {
+            dispatch(addBrand(data));
+            form.reset();
+        })
+    };
     return (
         <div>
             <Header />
@@ -86,7 +50,7 @@ const EditCategoryPage = () => {
                             <FormItem>
                                 <FormLabel>Name</FormLabel>
                                 <FormControl>
-                                    <Input {...field} placeholder="Category Name" disabled={isPending} />
+                                    <Input {...field} placeholder="Brand Name" disabled={isPending} />
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>
@@ -99,7 +63,7 @@ const EditCategoryPage = () => {
                             <FormItem>
                                 <FormLabel>Description</FormLabel>
                                 <FormControl>
-                                    <Textarea {...field} placeholder="Category Description" disabled={isPending} />
+                                    <Textarea {...field} placeholder="Brand Description" disabled={isPending} />
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>
@@ -107,9 +71,6 @@ const EditCategoryPage = () => {
                     />
                     <Button type="submit" className="px-4 py-2" disabled={isPending}>
                         Submit
-                    </Button>
-                    <Button type="button" onClick={() => window.history.back()}   className="px-4 py-2 ml-2" disabled={isPending}>
-                        Go Back
                     </Button>
                 </form>
             </Form>
@@ -130,9 +91,9 @@ const EditCategoryPage = () => {
 const Header = () => {
     return (
         <header className="w-full bg-gray-100 rounded py-4 px-2 mb-4">
-            <h1 className="text-2xl font-semibold">Edit Category</h1>
+            <h1 className="text-2xl font-semibold">Add Brand</h1>
         </header>
     )
 }
 
-export default EditCategoryPage
+export default AddBrandPage
