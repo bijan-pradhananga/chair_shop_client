@@ -2,18 +2,15 @@
 
 import * as React from "react"
 import {
-  BookOpen,
-  Bot,
   GalleryVerticalEnd,
   Shapes,
   ShoppingBag,
-  SquareTerminal,
   TabletSmartphone,
 } from "lucide-react"
-
 import { NavMain } from "@/components/nav-main"
 import { NavUser } from "@/components/nav-user"
 import { TeamSwitcher } from "@/components/team-switcher"
+
 import {
   Sidebar,
   SidebarContent,
@@ -21,14 +18,10 @@ import {
   SidebarHeader,
   SidebarRail,
 } from "@/components/ui/sidebar"
+import { useSession } from "next-auth/react"
 
 // This is sample data.
 const data = {
-  user: {
-    name: "admin",
-    email: "admin@example.com",
-    avatar: "",
-  },
   teams: [
     {
       name: "China Electronics",
@@ -95,7 +88,7 @@ const data = {
 
       ],
     },
-    
+
   ],
 
 }
@@ -103,6 +96,7 @@ const data = {
 export function AppSidebar({
   ...props
 }) {
+  const { data: session } = useSession();
   return (
     (<Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
@@ -112,7 +106,7 @@ export function AppSidebar({
         <NavMain items={data.navMain} />
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={data.user} />
+          <NavUser user={session.user} />
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>)
