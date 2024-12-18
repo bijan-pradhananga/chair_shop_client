@@ -1,11 +1,9 @@
 "use client"
-
 import {
   ChevronsUpDown,
   LogOut,
   Sparkles,
 } from "lucide-react"
-
 import {
   Avatar,
   AvatarFallback,
@@ -26,13 +24,15 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar"
-import { useState } from "react"
+import { signOut } from "next-auth/react"
+import { useSession } from "next-auth/react"
 
 export function NavUser({
   user
 }) {
   const { isMobile } = useSidebar()
-  const [dialogOpen, setDialogOpen] = useState(false);
+  const { data: session } = useSession();
+  
   return (
     (<SidebarMenu>
       <SidebarMenuItem>
@@ -71,14 +71,14 @@ export function NavUser({
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              <DropdownMenuItem onClick={() => setDialogOpen(true)}>
+              <DropdownMenuItem >
                 <Sparkles />
                 Edit Profile
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuSeparator />
-            <DropdownMenuItem>
+            <DropdownMenuItem onClick={() => signOut({redirectTo:'/auth/adminLogin'})}>
               <LogOut />
               Log out
             </DropdownMenuItem>
