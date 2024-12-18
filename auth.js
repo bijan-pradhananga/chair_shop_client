@@ -2,20 +2,24 @@ import NextAuth from "next-auth"
 import Credentials from "next-auth/providers/credentials";
 // import GitHub from "next-auth/providers/github"
 // import Google from "next-auth/providers/google"
-import { connectDB } from "./lib/db";
-import User from "./models/User";
 import { compare } from "bcryptjs";
 import { LoginSchema } from "./schemas";
+import { PrismaAdapter } from "@auth/prisma-adapter";
+import { prisma } from "./lib/database";
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
+  adapter: PrismaAdapter(prisma),
   providers: [
     Credentials({
       authorize: async (credentials) => {
         const validatedFields = LoginSchema.safeParse(credentials);
         if (validatedFields.success) {
           const { email, password } = validatedFields.data;
-          await connectDB()
-          const user = await User.findOne({ email }).select("+password +role");
+          const user = await prisma.user.findUnique({
+            where: {
+              email,
+            }
+          })
           if (!user) return null;
           if (!user.password) return null;
           const isMatched = await compare(password, user.password);
@@ -37,14 +41,14 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   pages: {
     signIn: '/auth/login'
   },
-//   events:{
-//     async linkAccount({user}){
-//       await connectDB();
-//       await User.findByIdAndUpdate( user.id,
-//         { emailVerified: new Date() } 
-//       );
-//     }
-//   },
+  //   events:{
+  //     async linkAccount({user}){
+  //       await connectDB();
+  //       await User.findByIdAndUpdate( user.id,
+  //         { emailVerified: new Date() } 
+  //       );
+  //     }
+  //   },
   callbacks: {
     async session({ session, token }) {
       if (token?.sub && token?.role) {

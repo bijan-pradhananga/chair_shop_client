@@ -3,10 +3,9 @@
 import { compare, hash } from "bcryptjs";
 import { LoginSchema, RegisterSchema } from "@/schemas";
 import { signIn } from "@/auth";
-import { connectDB } from "@/lib/db";
-import User from "@/models/User";
 import { AuthError } from "next-auth";
 import { DEFAULT_ADMIN_LOGIN_REDIRECT, DEFAULT_LOGIN_REDIRECT } from "@/routes/routes";
+import { prisma } from "@/lib/database";
 
 
 export const login = async (values) => {
@@ -16,8 +15,11 @@ export const login = async (values) => {
     }
     const { email, password } = validatedFields.data;
     try {
-        await connectDB();
-        const existingUser = await User.findOne({ email }).select("+password");
+        const existingUser = await prisma.user.findUnique({
+            where: {
+                email,
+            }
+        })
         if (!existingUser || !existingUser.email || !existingUser.password) {
             return { error: "Email does not exist" }
         }
@@ -51,15 +53,21 @@ export const register = async (values) => {
     const { name, email, password } = validatedFields.data;
     const hashedPassword = await hash(password, 10);
     try {
-        await connectDB();
-        const existingUser = await User.findOne({ email });
+
+        const existingUser = await prisma.user.findUnique({
+            where: {
+                email,
+            }
+        })
         if (existingUser) {
             return { error: "User already exists with this email" };
         };
-        await User.create({
-            name,
-            email,
-            password: hashedPassword
+        await prisma.user.create({
+            data: {
+                name,
+                email,
+                password: hashedPassword,
+            },
         });
 
         return { success: "User Registered Successfully" }
@@ -68,6 +76,16 @@ export const register = async (values) => {
         return { error: "Internal server error" };
     }
 
+}
+
+
+export const testPrismaConnection = async () => {
+    try {
+        const result = await prisma.user.findMany();
+        console.log("Prisma connection test successful:", result);
+    } catch (error) {
+        console.error("Prisma connection test failed:", error);
+    }
 }
 
 // export const LoginViaSocials = async (provider: 'google' | 'github') => {
