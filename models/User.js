@@ -23,11 +23,11 @@ const UserSchema = new Schema(
     image: {
       type: String,
     },
-    emailVerified: {
-      type: Date,
-    },
+    // emailVerified: {
+    //   type: Date,
+    // },
     role: { type: String, default: "user" },
-    authProviderId: { type: String },
+    // authProviderId: { type: String },
   },
   {
     timestamps: true,
