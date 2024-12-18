@@ -49,8 +49,8 @@ const Register = () => {
                 setError(data.error);
             })
         })
-
     }
+    
     return (
         <Card className="w-full max-w-md shadow-input">
             <CardHeader>
