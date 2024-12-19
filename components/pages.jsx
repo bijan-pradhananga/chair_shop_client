@@ -1,14 +1,13 @@
 import {
     Pagination,
     PaginationContent,
-    PaginationEllipsis,
     PaginationItem,
     PaginationLink,
     PaginationNext,
     PaginationPrevious,
   } from "@/components/ui/pagination";
   
-  const PaginationComponent = ({ currentPage, totalPages }) => {
+  const PaginationComponent = ({ currentPage, totalPages, sort='def' }) => {
     // Create an array for page numbers to render
     const getPageNumbers = () => {
       const pages = [];
@@ -25,7 +24,7 @@ import {
         {currentPage > 1 && (
           <PaginationItem>
             <PaginationPrevious
-                href={`?page=${currentPage - 1}`}
+                href={`?page=${currentPage - 1}&sort=${sort}`}
             />
           </PaginationItem>
         )}
@@ -34,7 +33,7 @@ import {
           {getPageNumbers().map((page) => (
             <PaginationItem key={page}>
               <PaginationLink
-                href={`?page=${page}`}
+                href={`?page=${page}&sort=${sort}`}
                 isActive={page === currentPage}
                 // onClick={() => onPageChange(page)}
               >
@@ -48,7 +47,7 @@ import {
           {currentPage < totalPages && (
           <PaginationItem>
             <PaginationNext
-               href={`?page=${currentPage + 1}`}
+               href={`?page=${currentPage + 1}&sort=${sort}`}
             />
           </PaginationItem>
         )}
