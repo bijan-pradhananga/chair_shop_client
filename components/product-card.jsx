@@ -1,7 +1,5 @@
 import Link from "next/link";
-// import { capitalizeFirstLetter } from "@/utils/utils";
 import API from "@/config/config";
-import Image from "next/image";
 
 const ProductCard = ({ product }) => {
     return (
