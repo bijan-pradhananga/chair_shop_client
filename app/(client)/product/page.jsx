@@ -9,10 +9,11 @@ import { clearSearch, fetchProducts, searchProducts } from "@/lib/features/produ
 import PaginationComponent from "@/components/pages";
 import ProductEmpty from "@/components/design/productEmpty";
 import { Suspense, useEffect } from "react";
+import ServerErrorPage from "@/components/design/serverError";
 
 const ProductPage = () => {
     const dispatch = useAppDispatch();
-    const { data, isLoading, total, totalPages, isSearched } = useAppSelector((state) => state.product);
+    const { data, isLoading, total, totalPages, isSearched ,error} = useAppSelector((state) => state.product);
     const searchParams = useSearchParams();
 
     let limit = 8;
@@ -38,6 +39,9 @@ const ProductPage = () => {
         dispatch(fetchProducts({ page: currentPage, limit, sort }));
     }, [dispatch, currentPage, sort]);
 
+    if (error) {
+        return <ServerErrorPage/>
+    }
     return (
         <section>
             <Header fetchItems={fetchItems} searchItems={searchItems} page={currentPage} />
