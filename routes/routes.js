@@ -4,7 +4,7 @@
  * @type {string[]}
  */
 export const publicRoutes = [
-    "/","/product","/product/:id",
+    "/","/contact","/product","/product/:id",
 ];
 
 /**
@@ -30,5 +30,5 @@ export const adminRoute = "/admin"
  */
 export const apiAuthPrefix = "/api/auth";
 
-export const DEFAULT_LOGIN_REDIRECT = "/settings";
+export const DEFAULT_LOGIN_REDIRECT = "/";
 export const DEFAULT_ADMIN_LOGIN_REDIRECT = "/admin/product";
