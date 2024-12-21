@@ -5,6 +5,7 @@ import { useSession } from 'next-auth/react';
 import { useAppDispatch, useAppSelector } from '@/lib/hooks';
 import AlertSuccess from "@/components/alert-success";
 import AlertFailure from "@/components/alert-failure";
+import { fetchSingleProduct } from '@/lib/features/product';
 
 const ProductActionBtns = ({ product }) => {
     const { data: session } = useSession();
@@ -17,11 +18,14 @@ const ProductActionBtns = ({ product }) => {
 
     const handleAddToCart = async () => {
         if (session && session.user.id) {
-            dispatch(addToCart({ userId:session.user.id, productId: product._id, quantity }));
-        }else{
-            alert("Please Login First")
+            const result = await dispatch(addToCart({ userId: session.user.id, productId: product._id, quantity }));
+            if (addToCart.fulfilled.match(result)) {
+                dispatch(fetchSingleProduct(product._id));
+            }
+        } else {
+            alert("Please Login First!");
         }
-      
+
     };
 
 
