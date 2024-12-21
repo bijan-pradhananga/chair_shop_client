@@ -17,8 +17,9 @@ const ContactPage = () => {
         const form = event.currentTarget;
         const formData = new FormData(event.currentTarget);
 
-        formData.append("access_key", process.env.NEXT_PUBLIC_ACCESS_KEY);
-
+        formData.append("access_key", process.env.NEXT_PUBLIC_CONTACT_KEY);
+        console.log(process.env.NEXT_PUBLIC_CONTACT_KEY);
+        
         const object = Object.fromEntries(formData);
         const json = JSON.stringify(object);
 
