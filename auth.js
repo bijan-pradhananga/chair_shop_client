@@ -1,7 +1,6 @@
 import NextAuth from "next-auth"
 import Credentials from "next-auth/providers/credentials";
-// import GitHub from "next-auth/providers/github"
-// import Google from "next-auth/providers/google"
+import jwt from 'jsonwebtoken';
 import { compare } from "bcryptjs";
 import { LoginSchema } from "./schemas";
 import { PrismaAdapter } from "@auth/prisma-adapter";
@@ -29,28 +28,13 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         return null;
       }
     }),
-    // GitHub({
-    //   clientId: process.env.GITHUB_CLIENT_ID,
-    //   clientSecret: process.env.GITHUB_CLIENT_SECRET
-    // }),
-    // Google({
-    //   clientId: process.env.GOOGLE_CLIENT_ID,
-    //   clientSecret: process.env.GOOGLE_CLIENT_SECRET
-    // })
   ],
   pages: {
     signIn: '/auth/login'
   },
-  //   events:{
-  //     async linkAccount({user}){
-  //       await connectDB();
-  //       await User.findByIdAndUpdate( user.id,
-  //         { emailVerified: new Date() } 
-  //       );
-  //     }
-  //   },
   callbacks: {
     async session({ session, token }) {
+
       if (token?.sub && token?.role) {
         session.user.id = token.sub;
         session.user.role = token.role;
