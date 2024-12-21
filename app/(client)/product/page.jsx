@@ -10,7 +10,6 @@ import PaginationComponent from "@/components/pages";
 import ProductEmpty from "@/components/design/productEmpty";
 import { Suspense, useEffect } from "react";
 import ServerErrorPage from "@/components/design/serverError";
-import HeaderLoader from "@/components/loader/header-loader";
 
 const ProductPage = () => {
     const dispatch = useAppDispatch();
@@ -49,9 +48,9 @@ const ProductPage = () => {
     }
     return (
         <section>
+            <Header fetchItems={fetchItems} searchItems={searchItems} page={currentPage} />
             {isLoading ? (
                 <div>
-                    <HeaderLoader />
                     <main className="grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-4 xl:gap-x-8">
                         <ProductCardLoader count={limit} />
                     </main>
@@ -60,7 +59,7 @@ const ProductPage = () => {
                 <ProductEmpty />
             ) : (
                 <div className="mb-10">
-                    <Header fetchItems={fetchItems} searchItems={searchItems} page={currentPage} />
+                    
                     <main className="grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-4 xl:gap-x-8">
                         {data.map((item, index) => (
                             <ProductCard key={index} product={item} />
