@@ -10,10 +10,11 @@ import PaginationComponent from "@/components/pages";
 import ProductEmpty from "@/components/design/productEmpty";
 import { Suspense, useEffect } from "react";
 import ServerErrorPage from "@/components/design/serverError";
+import HeaderLoader from "@/components/loader/header-loader";
 
 const ProductPage = () => {
     const dispatch = useAppDispatch();
-    const { data, isLoading, total, totalPages, isSearched ,error} = useAppSelector((state) => state.product);
+    const { data, isLoading, total, totalPages, isSearched, error } = useAppSelector((state) => state.product);
     const searchParams = useSearchParams();
 
     let limit = 8;
@@ -36,39 +37,47 @@ const ProductPage = () => {
     };
 
     useEffect(() => {
+        window.scrollTo(0, 0); // Scroll to the top of the page
+    }, []);
+
+    useEffect(() => {
         dispatch(fetchProducts({ page: currentPage, limit, sort }));
     }, [dispatch, currentPage, sort]);
 
     if (error) {
-        return <ServerErrorPage/>
+        return <ServerErrorPage />
     }
     return (
         <section>
-            <Header fetchItems={fetchItems} searchItems={searchItems} page={currentPage} />
-            <div>
-                {isLoading ? (
+            {isLoading ? (
+                <div>
+                    <HeaderLoader />
                     <main className="grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-4 xl:gap-x-8">
                         <ProductCardLoader count={limit} />
                     </main>
-                ) : data.length === 0 ? (
-                    <ProductEmpty />
-                ) : (
+                </div>
+            ) : data.length === 0 ? (
+                <ProductEmpty />
+            ) : (
+                <div className="mb-10">
+                    <Header fetchItems={fetchItems} searchItems={searchItems} page={currentPage} />
                     <main className="grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-4 xl:gap-x-8">
                         {data.map((item, index) => (
                             <ProductCard key={index} product={item} />
                         ))}
                     </main>
-                )}
+                </div>
 
-                {/* Pagination */}
-                {(!isSearched && total > 0) && (
-                    <PaginationComponent
-                        currentPage={currentPage}
-                        totalPages={totalPages}
-                        sort={sort}
-                    />
-                )}
-            </div>
+            )}
+
+            {/* Pagination */}
+            {(!isSearched && total > 0) && (
+                <PaginationComponent
+                    currentPage={currentPage}
+                    totalPages={totalPages}
+                    sort={sort}
+                />
+            )}
         </section>
     );
 };
