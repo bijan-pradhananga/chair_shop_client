@@ -63,9 +63,8 @@ const PageContent = () => {
                 await dispatch(fetchSingleProduct(id));
             }
         };
-
         fetchDetails();
-    }, [id,dispatch]);
+    }, [id]);
 
     useEffect(() => {
         if (Object.keys(singleData).length > 0) {
@@ -80,9 +79,9 @@ const PageContent = () => {
             form.setValue('price', singleData.price);
             form.setValue('stock', singleData.stock);
         }
-    }, [singleData]);
+    }, [singleData,categories,brands]);
 
-    if (singleLoading || isLoading) {
+    if (singleLoading && isLoading) {
         return <div>Loading...</div>;
     }
 
@@ -163,35 +162,36 @@ const PageContent = () => {
                             </FormItem>
                         )}
                     />
-                    <FormField
-                        control={form.control}
-                        name="category"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>Category</FormLabel>
-                                <FormControl>
-                                    <Select
-                                        onValueChange={field.onChange} // Update the form value
-                                        value={field.value} // Controlled input
-                                        disabled={isPending} // Disable if needed
-                                    >
-                                        <SelectTrigger>
-                                            <SelectValue placeholder="Select a category" />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            {categories.map((item) => (
-                                                <SelectItem key={item._id} value={item._id}>
-                                                    {item.name}
-                                                </SelectItem>
-                                            ))}
-                                        </SelectContent>
-                                    </Select>
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
-                    <FormField
+                    {!isLoading &&
+                        <FormField
+                            control={form.control}
+                            name="category"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Category</FormLabel>
+                                    <FormControl>
+                                        <Select
+                                            onValueChange={field.onChange} // Update the form value
+                                            value={field.value} // Controlled input
+                                            disabled={isPending} // Disable if needed
+                                        >
+                                            <SelectTrigger>
+                                                <SelectValue placeholder="Select a category" />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                {categories.map((item) => (
+                                                    <SelectItem key={item._id} value={item._id}>
+                                                        {item.name}
+                                                    </SelectItem>
+                                                ))}
+                                            </SelectContent>
+                                        </Select>
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />}
+                    {!isLoading && <FormField
                         control={form.control}
                         name="brand"
                         render={({ field }) => (
@@ -218,7 +218,8 @@ const PageContent = () => {
                                 <FormMessage />
                             </FormItem>
                         )}
-                    />
+                    />}
+
                     <Button type="submit" disabled={isPending}>
                         Submit
                     </Button>
