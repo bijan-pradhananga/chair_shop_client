@@ -1,6 +1,5 @@
 "use client"
 import NotFoundPage from '@/components/design/404notFound';
-import ServerErrorPage from '@/components/design/serverError';
 import ProductActionBtns from '@/components/product-action-btns';
 import { Button } from '@/components/ui/button';
 import ProductImages from '@/components/image-container';
