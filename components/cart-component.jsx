@@ -1,7 +1,7 @@
 import API from "@/config/config";
 import Link from "next/link";
 
-const CartComponent = ({item}) => {
+const CartComponent = ({item, HandleRemoveFromCart}) => {
     
     return (
         <div className="rounded-lg border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-700 dark:bg-gray-800 md:p-6">
@@ -14,11 +14,11 @@ const CartComponent = ({item}) => {
                     />
 
                 </Link>
-
                 <div className="flex items-center justify-between md:order-3 md:justify-end">
+                    <div></div>
                     <div className="text-end md:order-4 md:w-32">
                         <p className="text-base font-bold text-gray-900 dark:text-white">
-                            Rs. {item.product.price}
+                            Rs. {item.product.price*item.quantity}
                         </p>
                     </div>
                 </div>
@@ -36,7 +36,7 @@ const CartComponent = ({item}) => {
                             Quantity: {item.quantity}
                         </div>
                         <button
-                            type="button"
+                            type="button" onClick={()=>{HandleRemoveFromCart(item.product._id)}}
                             className="inline-flex items-center text-sm font-medium text-red-600 hover:underline dark:text-red-500"
                         >
                             <svg
