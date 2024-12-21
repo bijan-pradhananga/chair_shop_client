@@ -1,6 +1,5 @@
 import NextAuth from "next-auth"
 import Credentials from "next-auth/providers/credentials";
-import jwt from 'jsonwebtoken';
 import { compare } from "bcryptjs";
 import { LoginSchema } from "./schemas";
 import { PrismaAdapter } from "@auth/prisma-adapter";
