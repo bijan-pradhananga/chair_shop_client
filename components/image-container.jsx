@@ -8,13 +8,14 @@ const ProductImages = ({ name, images }) => {
     return (
         <div className="shrink-0 max-w-md lg:max-w-lg mx-auto">
             {/* Main Image */}
-            <div>
-                <img
-                    className="w-[510px] object-cover  aspect-square border border-gray-200 rounded-lg"
-                    src={`${API.defaults.baseURL}/${selectedImage}`}
-                    alt={name}
-                />
-            </div>
+            <div className="flex justify-center items-center w-full max-w-md min-w-[500px] aspect-square border border-gray-200 rounded-lg overflow-hidden bg-gray-100">
+    <img
+        className="w-full h-full object-contain"
+        src={`${API.defaults.baseURL}/${selectedImage}`}
+        alt={name}
+    />
+</div>
+
 
             {/* Thumbnail Images */}
             <div className="mt-4 flex gap-2 justify-center">
