@@ -46,6 +46,13 @@ const HamButton = ({ toggleMenu }) => {
 }
 
 const PhoneNavLink = ({ isMenuOpen, toggleMenu }) => {
+    const navigationLinks = [
+        { href: "/", label: "Home", ariaCurrent: "page" },
+        { href: "/product", label: "Products" },
+        { href: "/contact", label: "Contact" },
+        { href: "/auth/register", label: "Register" },
+        { href: "/auth/login", label: "Login" },
+    ];
     return (
         <div
             className={`${isMenuOpen ? 'translate-x-0' : '-translate-x-full'
@@ -75,31 +82,16 @@ const PhoneNavLink = ({ isMenuOpen, toggleMenu }) => {
             </button>
 
             <ul className="flex flex-col justify-center items-center h-full space-y-8 dark:text-white text-2xl font-semibold">
-                <li onClick={toggleMenu}>
-                    <Link href="#"  className="hover:text-blue-500 transition-colors duration-300">
-                        Home
-                    </Link>
-                </li>
-                <li onClick={toggleMenu}>
-                    <Link href="#aboutM"   className="hover:text-blue-500 transition-colors duration-300" >
-                        About
-                    </Link>
-                </li>
-                <li onClick={toggleMenu}>
-                    <Link href="#skills"  className="hover:text-blue-500 transition-colors duration-300">
-                        Skills
-                    </Link>
-                </li>
-                <li onClick={toggleMenu}>
-                    <Link href="#projects"  className="hover:text-blue-500 transition-colors duration-300">
-                        Projects
-                    </Link>
-                </li>
-                <li onClick={toggleMenu}>
-                    <Link href="#contact"  className="hover:text-blue-500 transition-colors duration-300" >
-                        Contact
-                    </Link>
-                </li>
+                {navigationLinks.map((link) => (
+                    <li key={link.href} onClick={toggleMenu}>
+                        <Link
+                            href={link.href}
+                            className="hover:text-blue-500 transition-colors duration-300"
+                        >
+                            {link.label}
+                        </Link>
+                    </li>
+                ))}
             </ul>
         </div>
     )
