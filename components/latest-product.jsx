@@ -45,7 +45,7 @@ const LatestProductSection = () => {
 const Header = ({ fetchItems, searchItems, page }) => {
     return (
         <div className="w-full py-2 mb-4 border-b">
-            <h2 className="hidden md:block text-3xl font-bold">Latest Products</h2>
+            <h2 className=" text-3xl font-bold">Latest Products</h2>
         </div>
     );
 };
