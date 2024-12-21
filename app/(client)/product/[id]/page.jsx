@@ -13,30 +13,31 @@ import SingleProductLoader from '@/components/loader/single-product-loader';
 const Page = () => {
   const dispatch = useAppDispatch();
   const { singleData, error, singleLoading } = useAppSelector((state) => state.product);
+ 
   const params = useParams()
   const id = params.id;
+  
   if (!id) {
     return <NotFoundPage />
   }
   useEffect(() => {
     dispatch(fetchSingleProduct(id));
-  }, [id]);
-
+  }, [dispatch,id]);
 
   if (error) {
-    return <ServerErrorPage />
+    return <NotFoundPage />
   }
   return (
-    <main className="lg:grid lg:grid-cols-2 lg:gap-8 xl:gap-16 md:mt-10">
+    <main className="lg:grid lg:grid-cols-2 lg:gap-8 xl:gap-16 md:mt-10 mb-20">
       {singleLoading ? (
-         <SingleProductLoader/>
-      ):(
+        <SingleProductLoader />
+      ) : (
         <>
-        <ProductImages name={singleData.name} images={singleData.images}/>
-        <ProductDescription product={singleData}/>
+          <ProductImages name={singleData.name} images={singleData.images} />
+          <ProductDescription product={singleData}  />
         </>
       )}
-      
+
     </main>
 
   )
@@ -45,7 +46,7 @@ const Page = () => {
 
 const ProductDescription = ({ product }) => {
   return (
-    <div className="mt-6 sm:mt-8 lg:mt-0">
+    <div className="mt-6 sm:mt-8 lg:mt-0 ">
       {/* Product Name */}
       <h1 className="text-xl font-semibold text-gray-900 sm:text-2xl dark:text-white">
         {product.name}
@@ -59,7 +60,7 @@ const ProductDescription = ({ product }) => {
       </div>
 
       {/* Action Buttons */}
-      <ProductActionBtns product={product} />
+      <ProductActionBtns product={product}  />
 
       {/* Category and Brand */}
       <div className="mt-6 flex flex-wrap items-center gap-4">
