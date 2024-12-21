@@ -56,16 +56,16 @@ const PageContent = () => {
     });
 
     useEffect(() => {
-        const fetchDetails = () => {
-            dispatch(fetchCategory());
-            dispatch(fetchBrand());
+        const fetchDetails = async () => {
+            await dispatch(fetchCategory());
+            await dispatch(fetchBrand());
             if (id) {
-                dispatch(fetchSingleProduct(id));
+                await dispatch(fetchSingleProduct(id));
             }
         };
 
         fetchDetails();
-    }, [id]);
+    }, [id,dispatch]);
 
     useEffect(() => {
         if (Object.keys(singleData).length > 0) {
