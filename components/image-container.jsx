@@ -1,3 +1,4 @@
+"use client"
 import { useState } from "react";
 import API from '@/config/config';
 
@@ -9,7 +10,7 @@ const ProductImages = ({ name, images }) => {
             {/* Main Image */}
             <div>
                 <img
-                    className="w-full  aspect-square border border-gray-200 rounded-lg"
+                    className="w-[510px] object-cover  aspect-square border border-gray-200 rounded-lg"
                     src={`${API.defaults.baseURL}/${selectedImage}`}
                     alt={name}
                 />
