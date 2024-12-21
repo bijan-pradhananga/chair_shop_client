@@ -14,32 +14,32 @@ const ContactPage = () => {
     const submitForm = async (event) => {
         setLoading(true);
         event.preventDefault();
-        const form = event.currentTarget;
-        const formData = new FormData(event.currentTarget);
+        // const form = event.currentTarget;
+        // const formData = new FormData(event.currentTarget);
 
-        formData.append("access_key", process.env.NEXT_PUBLIC_CONTACT_KEY);
+        // formData.append("access_key", process.env.NEXT_PUBLIC_CONTACT_KEY);
         console.log(process.env.NEXT_PUBLIC_CONTACT_KEY);
         
-        const object = Object.fromEntries(formData);
-        const json = JSON.stringify(object);
+        // const object = Object.fromEntries(formData);
+        // const json = JSON.stringify(object);
 
-        const res = await fetch("https://api.web3forms.com/submit", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                Accept: "application/json"
-            },
-            body: json
-        }).then((res) => res.json());
+        // const res = await fetch("https://api.web3forms.com/submit", {
+        //     method: "POST",
+        //     headers: {
+        //         "Content-Type": "application/json",
+        //         Accept: "application/json"
+        //     },
+        //     body: json
+        // }).then((res) => res.json());
 
-        if (res.success) {
-            setSuccess('Your Message Has Been Delivered!');
-            form.reset();
-            setLoading(false);
-        } else {
-            setError("Something Went Wrong! Try Again Later");
-            setLoading(false);
-        }
+        // if (res.success) {
+        //     setSuccess('Your Message Has Been Delivered!');
+        //     form.reset();
+        //     setLoading(false);
+        // } else {
+        //     setError("Something Went Wrong! Try Again Later");
+        //     setLoading(false);
+        // }
 
     };
     return (
