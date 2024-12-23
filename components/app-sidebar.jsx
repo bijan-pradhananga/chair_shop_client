@@ -83,7 +83,7 @@ const data = {
       items: [
         {
           title: "View Orders",
-          url: "#",
+          url: "/admin/orders",
         },
 
       ],
