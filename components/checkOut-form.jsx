@@ -1,3 +1,4 @@
+import Link from "next/link"
 import { Button } from "./ui/button"
 
 const CheckOutForm = ({ totalPrice, cartItems }) => {
@@ -11,13 +12,13 @@ const CheckOutForm = ({ totalPrice, cartItems }) => {
                 {/* per product price quantity */}
                 <div className="space-y-2">
                     {
-                        cartItems.map((item,index) => (
+                        cartItems.map((item, index) => (
                             <dl className="flex items-center justify-between gap-4" key={index}>
                                 <dt className="text-base font-normal text-gray-500 dark:text-gray-400 w-1/2">
-                                    {item.product.name}
+                                    {`${item.product.name} x ${item.quantity}`}
                                 </dt>
                                 <dd className="text-base font-medium text-gray-900 dark:text-white">
-                                    Rs. {item.product.price}*{item.quantity}
+                                    Rs. {item.product.price*item.quantity}
                                 </dd>
                             </dl>
                         ))
@@ -33,11 +34,13 @@ const CheckOutForm = ({ totalPrice, cartItems }) => {
                     </dd>
                 </dl>
             </div>
-            <Button
-                className="w-full"
-            >
-                Proceed to Checkout
-            </Button>
+            <Link href='/cart/checkout'>
+                <Button
+                    className="w-full py-2 mt-2"
+                >
+                    Proceed to Checkout
+                </Button>
+            </Link>
             <div className="flex items-center justify-center gap-2">
                 <span className="text-sm font-normal text-gray-500 dark:text-gray-400">
                     {" "}
