@@ -1,8 +1,10 @@
 'use client'
+import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { useState } from "react";
-
+import { signOut  } from "next-auth/react";
 const PhoneNavbar = () => {
+    const {data:session} = useSession();
     const [isMenuOpen, setIsMenuOpen] = useState(false);
 
     const toggleMenu = () => {
@@ -12,7 +14,7 @@ const PhoneNavbar = () => {
     return (
         <>
             <HamButton toggleMenu={toggleMenu} />
-            <PhoneNavLink isMenuOpen={isMenuOpen} toggleMenu={toggleMenu} />
+            <PhoneNavLink session={session} isMenuOpen={isMenuOpen} toggleMenu={toggleMenu} />
         </>
 
     )
@@ -45,14 +47,13 @@ const HamButton = ({ toggleMenu }) => {
     )
 }
 
-const PhoneNavLink = ({ isMenuOpen, toggleMenu }) => {
+const PhoneNavLink = ({ isMenuOpen, toggleMenu, session }) => {
     const navigationLinks = [
         { href: "/", label: "Home", ariaCurrent: "page" },
         { href: "/product", label: "Products" },
         { href: "/contact", label: "Contact" },
-        { href: "/auth/register", label: "Register" },
-        { href: "/auth/login", label: "Login" },
     ];
+
     return (
         <div
             className={`${isMenuOpen ? 'translate-x-0' : '-translate-x-full'
@@ -92,9 +93,60 @@ const PhoneNavLink = ({ isMenuOpen, toggleMenu }) => {
                         </Link>
                     </li>
                 ))}
+
+                {session ? (
+                    <>
+                        <li onClick={toggleMenu}>
+                            <Link
+                                href="/cart"
+                                className="hover:text-blue-500 transition-colors duration-300"
+                            >
+                                Cart
+                            </Link>
+                        </li>
+                        <li onClick={toggleMenu}>
+                            <Link
+                                href="/orders"
+                                className="hover:text-blue-500 transition-colors duration-300"
+                            >
+                                Orders
+                            </Link>
+                        </li>
+                        <li>
+    
+                                <button  onClick={() => signOut({redirectTo:'/auth/login'})}
+                                    type="submit"
+                                    className="hover:text-blue-500 transition-colors duration-300"
+                                >
+                                    Logout
+                                </button>
+                            
+                        </li>
+                    </>
+                ) : (
+                    <>
+                        <li onClick={toggleMenu}>
+                            <Link
+                                href="/auth/register"
+                                className="hover:text-blue-500 transition-colors duration-300"
+                            >
+                                Register
+                            </Link>
+                        </li>
+                        <li onClick={toggleMenu}>
+                            <Link
+                                href="/auth/login"
+                                className="hover:text-blue-500 transition-colors duration-300"
+                            >
+                                Login
+                            </Link>
+                        </li>
+                    </>
+                )}
             </ul>
         </div>
-    )
-}
+    );
+};
+
 
 export default PhoneNavbar
