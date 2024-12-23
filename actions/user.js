@@ -79,17 +79,3 @@ export const register = async (values) => {
 }
 
 
-export const testPrismaConnection = async () => {
-    try {
-        const result = await prisma.user.findMany();
-        console.log("Prisma connection test successful:", result);
-    } catch (error) {
-        console.error("Prisma connection test failed:", error);
-    }
-}
-
-// export const LoginViaSocials = async (provider: 'google' | 'github') => {
-//     await signIn(provider, {
-//         callbackUrl: DEFAULT_LOGIN_REDIRECT
-//     });
-// };
