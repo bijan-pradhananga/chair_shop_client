@@ -30,9 +30,7 @@ const NavLogo = () => {
       href="/"
       className="flex items-center space-x-3 rtl:space-x-reverse"
     >
-      <span className="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">
-        Logo
-      </span>
+      <img src="/logo.png" className="w-14 h-10 object-cover" />
     </Link>
   );
 };
@@ -73,15 +71,15 @@ const NavLinks = ({ session }) => {
             </li>
             <li>
               <form action={
-                  async () => {
-                      "use server";
-                      await signOut({redirectTo:'/auth/login'});
-                  }
+                async () => {
+                  "use server";
+                  await signOut({ redirectTo: '/auth/login' });
+                }
               }>
-  
-                  <button type="submit">
-                      Logout
-                  </button>
+
+                <button type="submit">
+                  Logout
+                </button>
               </form>
             </li>
           </>

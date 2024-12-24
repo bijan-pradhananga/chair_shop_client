@@ -19,12 +19,13 @@ import {
   SidebarRail,
 } from "@/components/ui/sidebar"
 import { useSession } from "next-auth/react"
+import { companyName } from "@/app/(client)/info"
 
 // This is sample data.
 const data = {
   teams: [
     {
-      name: "China Electronics",
+      name: companyName,
       logo: GalleryVerticalEnd,
       plan: "Enterprise",
     },

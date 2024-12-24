@@ -1,3 +1,4 @@
+import { companyName } from '@/app/(client)/info';
 import Link from 'next/link'
 const currentYear = new Date().getFullYear();
 
@@ -9,7 +10,7 @@ const FooterComponent = () => {
           <div className="mb-6 md:mb-0">
             <Link href="/" className="flex items-center">
               <span className="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">
-                China Electronics
+                {companyName}
               </span>
               <img src="/logo.png" className="w-14 h-10 object-cover" />
             </Link>
@@ -17,7 +18,7 @@ const FooterComponent = () => {
           <div className="grid grid-cols-2 gap-8 sm:gap-6 sm:grid-cols-2">
             <div>
               <h2 className="mb-6 text-sm font-semibold text-gray-900 uppercase dark:text-white">
-                China Electronics
+                {companyName}
               </h2>
               <ul className="text-gray-500 dark:text-gray-400 font-medium">
                 <li className="mb-4">
@@ -62,7 +63,7 @@ const FooterComponent = () => {
           <span className="text-sm text-gray-500 sm:text-center dark:text-gray-400">
             © {currentYear}{" "}
             <a href="#" className="hover:underline">
-              China Electronics
+              {companyName}
             </a>
             . All Rights Reserved.
           </span>

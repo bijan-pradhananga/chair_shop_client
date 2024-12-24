@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata = {
-  title: "China Electronics",
+  title: "TheChairShop",
   description: "Ecommerce site to sell electronics",
 };
 

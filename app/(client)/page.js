@@ -2,6 +2,7 @@ import LatestProductSection from "@/components/latest-product";
 import { buttonVariants } from "@/components/ui/button";
 import Image from "next/image";
 import Link from "next/link";
+import { companyName } from "./info";
 
 export default function Home() {
   return (
@@ -21,7 +22,7 @@ export default function Home() {
         {/* Content Section */}
         <div className="content-center justify-self-start md:col-span-7 md:text-start">
           <h1 className="mb-4 text-2xl font-extrabold leading-none tracking-tight dark:text-white md:max-w-2xl md:text-5xl xl:text-6xl">
-            Welcome to China Electronics!
+            Welcome to {companyName}
             <br />
             Shop the Best Deals on Top Products!
           </h1>
