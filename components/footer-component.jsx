@@ -49,7 +49,7 @@ const FooterComponent = () => {
                   </Link>
                 </li>
                 <li>
-                  <Link href="wishlist" className="hover:underline">
+                  <Link href="orders" className="hover:underline">
                     Orders
                   </Link>
                 </li>
