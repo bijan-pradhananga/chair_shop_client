@@ -25,14 +25,13 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar"
 import { signOut } from "next-auth/react"
-import { useSession } from "next-auth/react"
+import Link from "next/link"
 
 export function NavUser({
   user
 }) {
   const { isMobile } = useSidebar()
-  const { data: session } = useSession();
-  
+
   return (
     (<SidebarMenu>
       <SidebarMenuItem>
@@ -73,12 +72,14 @@ export function NavUser({
             <DropdownMenuGroup>
               <DropdownMenuItem >
                 <Sparkles />
-                Edit Profile
+                <Link href='/admin/profile'>
+                  Edit Profile
+                </Link>
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={() => signOut({redirectTo:'/auth/adminLogin'})}>
+            <DropdownMenuItem onClick={() => signOut({ redirectTo: '/auth/adminLogin' })}>
               <LogOut />
               Log out
             </DropdownMenuItem>

@@ -6,6 +6,7 @@ import { signIn } from "@/auth";
 import { AuthError } from "next-auth";
 import { DEFAULT_ADMIN_LOGIN_REDIRECT, DEFAULT_LOGIN_REDIRECT } from "@/routes/routes";
 import { prisma } from "@/lib/database";
+import { passwordSchema } from "@/schemas/password";
 
 
 export const login = async (values) => {
@@ -79,3 +80,39 @@ export const register = async (values) => {
 }
 
 
+
+
+export const changePassword = async (values) => {
+    const validatedFields = passwordSchema.safeParse(values);
+    if (!validatedFields.success) {
+        return { error: "Invalid Fields" };
+    }
+    const { email, currentPassword, newPassword } = validatedFields.data;
+    try {
+        // Fetch the user by email
+        const existingUser = await prisma.user.findUnique({
+            where: { email },
+        });
+        if (!existingUser || !existingUser.password) {
+            return { error: "User not found" };
+        }
+        // Compare the current password with the stored password hash
+        const isMatched = await compare(currentPassword, existingUser.password);
+        if (!isMatched) {
+            return { error: "Current password is incorrect" };
+        }
+        // Hash the new password
+        const hashedNewPassword = await hash(newPassword, 10);
+
+        // Update the user's password
+        await prisma.user.update({
+            where: { email },
+            data: { password: hashedNewPassword },
+        });
+
+        return { success: "Password updated successfully" };
+    } catch (error) {
+        console.error("Error updating password:", error);
+        return { error: "Internal server error" };
+    }
+};
