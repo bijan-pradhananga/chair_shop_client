@@ -1,6 +1,7 @@
 "use client";
 
 import NotFoundPage from "@/components/design/404notFound";
+import GlobalLoader from "@/components/loader/globalLoader";
 import API from "@/config/config";
 import { fetchSingleOrder } from "@/lib/features/order";
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
@@ -23,7 +24,7 @@ const OrderDetails = () => {
     }, [dispatch]);
 
     if (isLoading && !singleData.items) {
-        return <div>Loading</div>;
+        return <GlobalLoader/>;
     }
 
 

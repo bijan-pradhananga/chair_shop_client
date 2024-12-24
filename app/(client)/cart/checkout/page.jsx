@@ -23,6 +23,7 @@ import EmptyCart from "@/components/design/emptycart";
 import ServerErrorPage from "@/components/design/serverError";
 import { useRouter } from "next/navigation";
 import { Loader2 } from "lucide-react";
+import GlobalLoader from "@/components/loader/globalLoader";
 
 const CheckOutPage = () => {
     const { data: session } = useSession();
@@ -79,7 +80,7 @@ const CheckOutPage = () => {
     }, [dispatch]);
 
     if (cartLoading) {
-        return <div>Loading</div>
+        return <GlobalLoader/>
     }
 
     if (!cartLoading && total == 0) {

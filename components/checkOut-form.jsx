@@ -46,8 +46,8 @@ const CheckOutForm = ({ totalPrice, cartItems }) => {
                     {" "}
                     or{" "}
                 </span>
-                <a
-                    href="#"
+                <Link
+                    href='/product'
                     title=""
                     className="inline-flex items-center gap-2 text-sm font-medium text-primary-700 underline hover:no-underline dark:text-primary-500"
                 >
@@ -67,7 +67,7 @@ const CheckOutForm = ({ totalPrice, cartItems }) => {
                             d="M19 12H5m14 0-4 4m4-4-4-4"
                         />
                     </svg>
-                </a>
+                </Link>
             </div>
         </div>
     )

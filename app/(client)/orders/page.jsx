@@ -1,11 +1,12 @@
 "use client"
 import OrderCardComponent from "@/components/order-card-component";
-import { cancelOrder, clearSuccess, fetchUserOrders ,clearError} from "@/lib/features/order";
+import { cancelOrder, clearSuccess, fetchUserOrders, clearError } from "@/lib/features/order";
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 import { useSession } from "next-auth/react";
 import { useEffect } from "react";
 import AlertSuccess from "@/components/alert-success";
 import AlertFailure from "@/components/alert-failure";
+import OrderCardLoader from "@/components/loader/orderCardLoader";
 
 const OrderPage = () => {
   const { data: session } = useSession();
@@ -26,9 +27,7 @@ const OrderPage = () => {
     }
   }
 
-  if (isLoading) {
-    return <div>Loading</div>
-  }
+
   return (
 
     <section className="mx-auto max-w-screen-xl px-2 2xl:px-0 mt-2">
@@ -42,9 +41,28 @@ const OrderPage = () => {
           <div className="flow-root">
             <div className=" flow-root ">
               <div className="divide-y divide-gray-200 dark:divide-gray-700">
-                {orders.map((order, index) => (
-                  <OrderCardComponent order={order} key={index} handleCancelOrder={handleCancelOrder} />
-                ))}
+                {isLoading ? (
+                  <>
+                    <OrderCardLoader />
+                    <OrderCardLoader />
+                    <OrderCardLoader />
+                    <OrderCardLoader />
+                  </>
+
+                ) : orders.length === 0 ? (
+                  <div>No Orders Found</div>
+                ) : (
+                  orders.map((order, index) => (
+                    <OrderCardComponent
+                      order={order}
+                      key={index}
+                      handleCancelOrder={handleCancelOrder}
+                    />
+                  ))
+                )}
+
+
+
               </div>
             </div>
           </div>
