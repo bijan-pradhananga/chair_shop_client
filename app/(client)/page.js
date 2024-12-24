@@ -20,13 +20,13 @@ export default function Home() {
         </div>
 
         {/* Content Section */}
-        <div className="content-center justify-self-start md:col-span-7 md:text-start">
-          <h1 className="mb-4 text-2xl font-extrabold leading-none tracking-tight dark:text-white md:max-w-2xl md:text-5xl xl:text-6xl">
+        <div className="content-center justify-self-start md:col-span-7 md:text-start mt-2 lg:mt-0">
+          <h1 className="mb-4 text-2xl mt-4 font-extrabold leading-none tracking-tight dark:text-white md:max-w-2xl md:text-5xl xl:text-6xl">
             Welcome to {companyName}
             <br />
             Shop the Best Deals on Top Products!
           </h1>
-          <p className="mb-4 max-w-2xl text-gray-500 dark:text-gray-400 md:mb-5 md:text-lg  lg:text-xl">
+          <p className="mb-6 max-w-2xl text-gray-500 dark:text-gray-400 md:mb-10 md:text-lg  lg:text-xl">
             Discover amazing deals, exclusive offers, and fast delivery on all your favorite products. Shop now and save big!
           </p>
           <Link
