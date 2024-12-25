@@ -16,9 +16,8 @@ import { billingInfoSchema } from "@/schemas/order";
 import { useSession } from "next-auth/react";
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 import { fetchCart } from "@/lib/features/cart";
-import AlertSuccess from "@/components/alert-success";
 import AlertFailure from "@/components/alert-failure";
-import { clearSuccess, clearError, createOrder } from "@/lib/features/order";
+import { clearError, createOrder } from "@/lib/features/order";
 import EmptyCart from "@/components/design/emptycart";
 import ServerErrorPage from "@/components/design/serverError";
 import { useRouter } from "next/navigation";
@@ -30,7 +29,7 @@ const CheckOutPage = () => {
     const router = useRouter();
     const dispatch = useAppDispatch();
     const { data: cartItems, totalPrice, total, isLoading: cartLoading, error: cartError } = useAppSelector((state) => state.cart);
-    const { error, success, } = useAppSelector((state) => state.order);
+    const { error } = useAppSelector((state) => state.order);
     const [isPending, startTransition] = useTransition();
 
 
@@ -43,12 +42,14 @@ const CheckOutPage = () => {
             street: "",
             city: "",
             country: "",
+            paymentMethod: "Cash on Delivery",
         },
     });
 
+
     const onSubmit = async (values) => {
         // Extract and structure data
-        const payload = {
+        const data = {
             userId: session?.user?.id, // Assuming userId is part of the session data
             billingInfo: {
                 name: values.name,
@@ -59,11 +60,47 @@ const CheckOutPage = () => {
                     city: values.city,
                     country: values.country,
                 },
+                paymentMethod: values.paymentMethod
             },
         };
-        // // Dispatch the action
-        startTransition(() => {
-            dispatch(createOrder(payload));
+
+        // Dispatch the action
+        startTransition(async () => {
+            const res = await dispatch(createOrder(data));
+            if (createOrder.fulfilled.match(res)) {
+                if (data.billingInfo.paymentMethod == 'Esewa') {
+                    const { payment, order } = res.payload;
+                    const form = document.createElement('form');
+                    form.method = 'POST';
+                    form.action = process.env.NEXT_PUBLIC_ESEWA_URL;
+                    const inputFields = {
+                        "amount": order.totalAmount,
+                        "failure_url": `${process.env.NEXT_PUBLIC_FRONTEND_BASE_URL}/payment/failure?orderId=${order._id}`,
+                        "product_delivery_charge": "0",
+                        "product_service_charge": "0",
+                        "product_code": process.env.NEXT_PUBLIC_MERCHANT_CODE,
+                        "signature": payment.signature,
+                        "signed_field_names": payment.signed_field_names,
+                        "success_url": `${process.env.NEXT_PUBLIC_API_BASE_URL}/payment/complete-payment`,
+                        "tax_amount": 0,
+                        "total_amount": order.totalAmount,
+                        "transaction_uuid": order._id,
+                    };
+
+                    // Append input fields to the form
+                    for (const [key, value] of Object.entries(inputFields)) {
+                        const input = document.createElement('input');
+                        input.type = 'hidden';
+                        input.name = key;
+                        input.value = value;
+                        form.appendChild(input);
+                    }
+                    document.body.appendChild(form);
+                    form.submit();
+                } else {
+                    router.push('/orders');
+                }
+            }
         });
     };
 
@@ -80,7 +117,7 @@ const CheckOutPage = () => {
     }, [dispatch]);
 
     if (cartLoading) {
-        return <GlobalLoader/>
+        return <GlobalLoader />
     }
 
     if (!cartLoading && total == 0) {
@@ -209,6 +246,42 @@ const CheckOutPage = () => {
                                             </FormItem>
                                         )}
                                     />
+                                    <FormField
+                                        control={form.control}
+                                        name="paymentMethod"
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel>Payment Method</FormLabel>
+                                                <FormControl>
+                                                    <div className="flex space-x-4">
+                                                        <label className="flex items-center space-x-2">
+                                                            <input
+                                                                {...field}
+                                                                type="radio"
+                                                                value="Cash on Delivery"
+                                                                checked={field.value === "Cash on Delivery"}
+                                                                disabled={isPending}
+                                                                className="mr-2"
+                                                            />
+                                                            <span>Cash on Delivery</span>
+                                                        </label>
+                                                        <label className="flex items-center space-x-2">
+                                                            <input
+                                                                {...field}
+                                                                type="radio"
+                                                                value="Esewa"
+                                                                checked={field.value === "Esewa"}
+                                                                disabled={isPending}
+                                                                className="mr-2"
+                                                            />
+                                                            <span>Esewa</span>
+                                                        </label>
+                                                    </div>
+                                                </FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
                                 </div>
                             </div>
                         </div>
@@ -224,7 +297,7 @@ const CheckOutPage = () => {
                                     <Button
                                         type="submit" className="px-4 py-4"
                                     >
-                                         Place Order
+                                        Place Order
                                     </Button>
                                 )}
                             </div>
@@ -232,11 +305,6 @@ const CheckOutPage = () => {
                     </div>
                 </form>
             </Form>
-            <AlertSuccess
-                isOpen={success}
-                message={success}
-                onClose={() => {dispatch(clearSuccess()); router.push('/orders') }}
-            />
             <AlertFailure
                 isOpen={error}
                 message={error}
