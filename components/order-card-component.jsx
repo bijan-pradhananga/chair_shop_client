@@ -47,7 +47,7 @@ const OrderCardComponent = ({ order, handleCancelOrder }) => {
             <div className="w-full grid grid-cols-2 lg:flex lg:w-1/4 lg:items-center lg:justify-end gap-4 ">
                 {/* Cancel Button */}
                 <div className="lg:w-auto">
-                    {order.status === 'Pending' ? (
+                    {(order.status === 'Pending' && order.paymentStatus!=='Paid') ? (
                         <button
                             type="button"
                             onClick={() => handleCancelOrder(order._id)}
