@@ -86,7 +86,6 @@ const CheckOutPage = () => {
                         "total_amount": order.totalAmount,
                         "transaction_uuid": order._id,
                     };
-                    console.log(inputFields);
                     
                     // Append input fields to the form
                     for (const [key, value] of Object.entries(inputFields)) {
