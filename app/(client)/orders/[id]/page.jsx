@@ -123,15 +123,24 @@ const OrderDetails = () => {
                                                 {singleData?.billingInfo?.address?.street}, {singleData?.billingInfo?.address?.city}, {singleData?.billingInfo?.address?.country}
                                             </dd>
                                         </dl>
+                                        <dl className="flex items-center justify-between gap-4">
+                                            <dt className="text-gray-500 dark:text-gray-400">
+                                                Payment Method
+                                            </dt>
+                                            <dd className="text-base font-medium text-gray-900 dark:text-white">
+                                                {singleData?.billingInfo?.paymentMethod}
+                                            </dd>
+                                        </dl>
                                     </div>
                                     <dl className="flex items-center justify-between gap-4 border-t border-gray-200 pt-2 dark:border-gray-700">
                                         <dt className="text-lg font-bold text-gray-900 dark:text-white">
                                             Total
                                         </dt>
                                         <dd className="text-lg font-bold text-gray-900 dark:text-white">
-                                            ${singleData?.totalAmount}
+                                            Rs.{singleData?.totalAmount}
                                         </dd>
                                     </dl>
+                                
                                 </div>
 
                                 <div className="gap-4 sm:flex sm:items-center">
