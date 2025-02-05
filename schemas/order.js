@@ -9,7 +9,7 @@ export const billingInfoSchema = z.object({
     street: z.string().min(1, "Street is required"),
     city: z.string().min(1, "City is required"),
     country: z.string().min(1, "Country is required"),
-    paymentMethod: z.enum(["Esewa", "Cash on Delivery"], {
+    paymentMethod: z.enum(["Cash on Delivery"], {
         required_error: "Payment method is required",
         invalid_type_error: "Invalid payment method",
     }).default("Cash on Delivery"),

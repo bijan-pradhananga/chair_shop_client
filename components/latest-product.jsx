@@ -6,6 +6,7 @@ import ProductEmpty from "./design/productEmpty";
 import ProductCard from "./product-card";
 import { useEffect } from "react";
 import { fetchProducts } from "@/lib/features/product";
+import ServerErrorPage from "./design/serverError";
 
 const LatestProductSection = () => {
     const dispatch = useAppDispatch();
